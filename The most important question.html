@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The most important question💌</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: #f5d0d0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Floating hearts background */
+  .heart-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .heart-bg span {
+    position: absolute;
+    font-size: 14px;
+    opacity: 0.3;
+    animation: floatHeart linear infinite;
+  }
+
+  @keyframes floatHeart {
+    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0.3; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Main window */
+  .window {
+    position: relative;
+    z-index: 10;
+    width: 340px;
+    border: 3px solid #b07070;
+    box-shadow: 4px 4px 0 #b07070, 8px 8px 0 rgba(176,112,112,0.3);
+    background: #f5d0d0;
+    image-rendering: pixelated;
+    animation: popIn 0.5s ease-out;
+  }
+
+  @keyframes popIn {
+    0%   { transform: scale(0.5); opacity: 0; }
+    80%  { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Title bar */
+  .titlebar {
+    background: #d4a0a0;
+    border-bottom: 3px solid #b07070;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    cursor: move;
+  }
+  .titlebar-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: #5a2020;
+  }
+  .titlebar-left span { font-size: 14px; }
+  .titlebar-btns {
+    display: flex;
+    gap: 5px;
+  }
+  .titlebar-btns div {
+    width: 12px; height: 12px;
+    border: 2px solid #b07070;
+    background: #f5d0d0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 7px; color: #b07070;
+  }
+  .titlebar-btns div:hover { background: #d4a0a0; }
+
+  /* Content area */
+  .content {
+    background: #f9e8e8;
+    border: 2px solid #d4a0a0;
+    margin: 8px;
+    padding: 16px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  /* Checker pattern overlay (subtle) */
+  .content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 6px,
+        rgba(200,150,150,0.07) 6px,
+        rgba(200,150,150,0.07) 12px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 6px,
+        rgba(200,150,150,0.07) 6px,
+        rgba(200,150,150,0.07) 12px
+      );
+    pointer-events: none;
+  }
+
+  h1 {
+    font-size: 9px;
+    color: #8b3030;
+    text-align: center;
+    margin-bottom: 14px;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+  }
+
+  /* Pixel cat */
+  .cat-wrap {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+  .pixel-cat {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    animation: catBounce 0.8s ease-in-out infinite alternate;
+  }
+  @keyframes catBounce {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-6px); }
+  }
+
+  /* Pixel cat drawn with CSS */
+  .cat-svg { width: 64px; height: 64px; }
+
+  /* Buttons */
+  .buttons {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 10px;
+  }
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 8px 14px;
+    border: 2px solid #b07070;
+    cursor: pointer;
+    background: #e8c0c0;
+    color: #5a2020;
+    box-shadow: 2px 2px 0 #b07070;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+  }
+  .btn:hover  { background: #d4a0a0; }
+  .btn:active { transform: translate(2px,2px); box-shadow: none; }
+
+  .btn-yes { background: #e8c0c0; }
+  .btn-no  { background: #e8c0c0; transition: left 0.05s, top 0.05s; position: absolute; }
+
+  .no-wrapper { position: relative; width: 70px; height: 34px; }
+
+  /* Final message */
+  .final-text {
+    display: none;
+    text-align: center;
+    font-size: 8px;
+    color: #8b3030;
+    line-height: 2;
+    position: relative;
+    z-index: 1;
+    animation: fadeInMsg 0.5s ease;
+  }
+  @keyframes fadeInMsg {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Hearts row */
+  .hearts-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .heart-icon {
+    font-size: 18px;
+    animation: heartBeat 1s ease-in-out infinite alternate;
+  }
+  .heart-icon:nth-child(2) { animation-delay: 0.2s; }
+  .heart-icon:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes heartBeat {
+    from { transform: scale(1); }
+    to   { transform: scale(1.3); }
+  }
+
+  /* Confetti on Yes */
+  .confetti-piece {
+    position: fixed;
+    top: -10px;
+    width: 8px; height: 8px;
+    opacity: 0.9;
+    animation: fall linear forwards;
+    z-index: 100;
+    image-rendering: pixelated;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(0) rotate(0); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating hearts background -->
+<div class="heart-bg" id="heartBg"></div>
+
+<!-- Main Window -->
+<div class="window" id="mainWindow">
+  <div class="titlebar" id="titlebar">
+    <div class="titlebar-left">
+      <span>💌</span> LOVE.exe
+    </div>
+    <div class="titlebar-btns">
+      <div>─</div>
+      <div>□</div>
+      <div>✕</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hearts-row">
+      <span class="heart-icon">🤍</span>
+      <span class="heart-icon">❤️</span>
+      <span class="heart-icon">🤍</span>
+    </div>
+
+    <h1 id="main-title">Will you be<br>my Valentine?</h1>
+
+    <!-- Pixel Cat SVG -->
+    <div class="cat-wrap">
+      <svg class="cat-svg" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <!-- body -->
+        <rect x="4" y="8" width="8" height="6" fill="#2a2a2a"/>
+        <!-- head -->
+        <rect x="4" y="3" width="8" height="6" fill="#2a2a2a"/>
+        <!-- ears -->
+        <rect x="4" y="1" width="2" height="3" fill="#2a2a2a"/>
+        <rect x="10" y="1" width="2" height="3" fill="#2a2a2a"/>
+        <!-- eye whites -->
+        <rect x="5" y="5" width="2" height="2" fill="white"/>
+        <rect x="9" y="5" width="2" height="2" fill="white"/>
+        <!-- pupils -->
+        <rect x="6" y="5" width="1" height="2" fill="#1a1a1a"/>
+        <rect x="10" y="5" width="1" height="2" fill="#1a1a1a"/>
+        <!-- nose -->
+        <rect x="8" y="7" width="1" height="1" fill="#ff8080"/>
+        <!-- glasses frames -->
+        <rect x="4" y="4" width="4" height="3" fill="none" stroke="#c08040" stroke-width="0.5"/>
+        <rect x="8" y="4" width="4" height="3" fill="none" stroke="#c08040" stroke-width="0.5"/>
+        <rect x="8" y="5" width="1" height="1" fill="#c08040"/>
+        <!-- tail -->
+        <rect x="12" y="10" width="2" height="1" fill="#2a2a2a"/>
+        <rect x="13" y="9" width="1" height="1" fill="#2a2a2a"/>
+        <!-- paws -->
+        <rect x="5" y="14" width="2" height="2" fill="#2a2a2a"/>
+        <rect x="9" y="14" width="2" height="2" fill="#2a2a2a"/>
+        <!-- heart on chest -->
+        <rect x="7" y="10" width="1" height="1" fill="#ff6060"/>
+        <rect x="8" y="10" width="1" height="1" fill="#ff6060"/>
+        <rect x="6" y="10" width="1" height="1" fill="#ff6060"/>
+        <rect x="9" y="10" width="1" height="1" fill="#ff6060"/>
+        <rect x="6" y="11" width="4" height="1" fill="#ff6060"/>
+        <rect x="7" y="12" width="2" height="1" fill="#ff6060"/>
+      </svg>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons" id="btn-group">
+      <button class="btn btn-yes" onclick="onYes()">Yes! 💕</button>
+      <div class="no-wrapper">
+        <button class="btn btn-no" id="noBtn" onclick="onNo()">No 😿</button>
+      </div>
+    </div>
+
+    <!-- Final message (hidden initially) -->
+    <div class="final-text" id="finalText">
+      <div style="font-size:20px;margin-bottom:8px">🎉💕🎉</div>
+      Really!<br><br>
+      <span style="font-size:7px;color:#b04040">
+        I was very shocked that you chose this answer:<br>
+        I am very happy<br>
+        Alright, we're officially a couple now
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Floating hearts background
+  const bg = document.getElementById('heartBg');
+  const emojis = ['♥','❤','💕','💗','💖','💝','💘'];
+  for (let i = 0; i < 25; i++) {
+    const s = document.createElement('span');
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.animationDuration = (6 + Math.random() * 8) + 's';
+    s.style.animationDelay = (Math.random() * 8) + 's';
+    s.style.fontSize = (10 + Math.random() * 14) + 'px';
+    bg.appendChild(s);
+  }
+
+  // No button dodge
+  const noBtn = document.getElementById('noBtn');
+  const noWrapper = noBtn.parentElement;
+  let noPresses = 0;
+
+  function onNo() {
+    noPresses++;
+    const maxMove = 200;
+    const rx = (Math.random() - 0.5) * maxMove * 2;
+    const ry = (Math.random() - 0.5) * maxMove * 2;
+    const win = document.getElementById('mainWindow');
+    const rect = win.getBoundingClientRect();
+    let nx = parseFloat(noBtn.style.left || 0) + rx;
+    let ny = parseFloat(noBtn.style.top  || 0) + ry;
+    noBtn.style.left = nx + 'px';
+    noBtn.style.top  = ny + 'px';
+
+    // After 5 dodges, hide it
+    if (noPresses >= 5) {
+      noBtn.style.display = 'none';
+    }
+
+    // Make yes button bigger
+    const yesBtn = document.querySelector('.btn-yes');
+    const currentSize = parseFloat(getComputedStyle(yesBtn).fontSize) || 8;
+    yesBtn.style.fontSize = Math.min(currentSize + 1, 13) + 'px';
+    yesBtn.style.padding = (8 + noPresses) + 'px ' + (14 + noPresses * 2) + 'px';
+  }
+
+  // Yes!
+  function onYes() {
+    document.getElementById('btn-group').style.display = 'none';
+    document.getElementById('main-title').style.display = 'none';
+    document.getElementById('finalText').style.display = 'block';
+    spawnConfetti();
+  }
+
+  function spawnConfetti() {
+    const colors = ['#ff6b9d','#ffd700','#ff4444','#a0e4ff','#b5ead7','#ffb347'];
+    for (let i = 0; i < 60; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        el.style.animationDelay = '0s';
+        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+      }, i * 40);
+    }
+  }
+
+  // Draggable window
+  const win = document.getElementById('mainWindow');
+  const bar = document.getElementById('titlebar');
+  let dragging = false, ox = 0, oy = 0;
+
+  bar.addEventListener('mousedown', e => {
+    dragging = true;
+    const r = win.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    win.style.position = 'fixed';
+    win.style.margin = '0';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    win.style.left = (e.clientX - ox) + 'px';
+    win.style.top  = (e.clientY - oy) + 'px';
+  });
+  document.addEventListener('mouseup', () => dragging = false);
+</script>
+</body>
+</html>
